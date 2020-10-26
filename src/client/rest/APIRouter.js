@@ -24,10 +24,12 @@ module.exports = function createRoute(manager) {
         return (options) => manager.request({
           path: route.map(encodeURIComponent).join("/"),
           method: name.toUpperCase(),
+          timeout: manager.requestTimeout,
+          json: true,
         }, options)
       }
 
-      route.push(name)
+      route.push(name.replace(/[A-Z]/, w => `_${w.toLowerCase()}`)) // camelCase to snake_case - accessToken -> access_token
       return p(handler)
     },
     apply(_t, _, args) {
