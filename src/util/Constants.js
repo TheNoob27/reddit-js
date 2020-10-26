@@ -1,7 +1,8 @@
 const package = require("../../package.json")
 
 module.exports = {
-  reddit: "https://www.reddit.com", // not reddit.com/api/v1 because not all endpoints start there
+  apiURL: "https://oauth.reddit.com", // not reddit.com/api/v1 because not all endpoints start there
+  reddit: "https://www.reddit.com",
   grantType: "password",
 
   defaultOptions: {

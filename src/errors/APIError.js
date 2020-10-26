@@ -1,6 +1,5 @@
 class APIError extends Error {
   constructor(error, path, method, status) {
-    console.log("error:", error)
     super(
       error.errors && errors.map(([a, b, c]) => `${a}: ${b} (${c})`).join('//')
       || error.message

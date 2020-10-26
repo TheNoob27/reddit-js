@@ -4,11 +4,7 @@ const RequestsManager = require("./rest/RequestsManager")
 
 class Client {
   constructor(options = {}) {
-    if (
-      !options ||
-      typeof options !== "object" ||
-      ["id", "secret", "username", "password"].some(k => !(k in options))
-    ) throw new Error("NO_CREDS")
+    if (!options || typeof options !== "object") options = {}
 
     this.username = options.username
     this.id = options.id
@@ -37,6 +33,8 @@ class Client {
   get v1()     { return this.reddit.v1 }  // reddit.com/api/v1
 
   get authForToken() {
+    if (["id", "secret", "username", "password"].some(k => !this[k])) throw new Error("NO_CREDS")
+    
     if (typeof this.id !== "string" || typeof this.secret !== "string") throw new Error("INVALID_ID_SECRET")
     return `${Buffer.from(`${this.id}:${this.secret}`).toString('base64')}`
   }

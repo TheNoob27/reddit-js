@@ -16,7 +16,7 @@ class RequestsManager {
       configurable: false
     })
 
-    this.redditURL = Constants.reddit
+    this.apiURL = Constants.apiURL
     this.tokenExpireDate = null
     this.requestTimeout = this.client.options.requestTimeout
   }
@@ -31,7 +31,7 @@ class RequestsManager {
     
     const { username, password } = this.client
     const data = await this.api.v1.accessToken.post({
-      data: {
+      form: {
         username, password,
         grant_type: Constants.grantType
       },
@@ -52,9 +52,13 @@ class RequestsManager {
 
   async request(data = {}, options = { data: {} }) {
     data.headers = {
-      "content-type": data.method === "GET" || data.method === "POST" ? "application/x-www-form-urlencoded" : "application/json",
-      "user-agent": this.client.options.userAgent
+      "user-agent": this.client.options.userAgent,
+      accept: "application/json",
+      "accept-encoding": "gzip, deflate" // idk
     }
+    if (data.method !== "GET" && !options.form) data.headers["content-type"] = "application/json"
+    else if (options.form) data.headers["content-type"] = "application/x-www-form-urlencoded"
+
     if (options.auth !== false)
       data.headers.authorization = options.auth === requestToken
         ? `Basic ${this.client.authForToken}`
@@ -67,12 +71,10 @@ class RequestsManager {
       options.data.raw_json = 1 // make reddit return "hello >:)" instead of "hello &gt;:)"
       data.path += this._toQuery(options.data)
     }
-    else if (data.method === "POST") data.body = this._toQuery(options.data).slice(1)
+    else if (options.form) data.body = this._toQuery(options.form).slice(1)
     else data.body = JSON.stringify(options.data)
 
-    // temporary
-    if (options.log) console.log(this.redditURL + data.path, data)
-    return fetch(this.redditURL + data.path, data)
+    return fetch(`${options.auth === requestToken || !options.auth ? Constants.reddit : this.apiURL}${data.path}`, data)
     .catch(e => {
       throw new HTTPError({
         name: e.constructor.name,
