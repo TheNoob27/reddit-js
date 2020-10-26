@@ -29,7 +29,6 @@ class Client {
     
     this._validateOptions(options.options)
     this.rest = new RequestsManager(this)
-    console.log(this)
   }
   
   get api() {

@@ -25,7 +25,6 @@
   "homepage": "https://github.com/TheNoob27/reddit.js#readme",
   "dependencies": {
     "@discordjs/collection": "^0.1.6",
-    "node-fetch": "^2.6.1",
-    "reddit": "^1.2.0"
+    "node-fetch": "^2.6.1"
   }
 }

@@ -21,15 +21,30 @@ module.exports = function createRoute(manager) {
       if (other.includes(name)) return () => route.join("/")
 			
       if (methods.includes(name)) {
-        return (options) => manager.request({
-          path: route.map(encodeURIComponent).join("/"),
-          method: name.toUpperCase(),
-          timeout: manager.requestTimeout,
-          json: true,
-        }, options)
+        // Preserve async stack
+        let stackTrace = null;
+        if (Error.captureStackTrace) {
+          stackTrace = {};
+          Error.captureStackTrace(stackTrace, this.get);
+        }
+        return (options) => 
+          manager.request({
+            path: route.map(encodeURIComponent).join("/"),
+            method: name.toUpperCase(),
+            timeout: manager.requestTimeout,
+            json: true,
+          }, options)
+          .catch(error => {
+            if (stackTrace && (error instanceof Error)) {
+              stackTrace.name = error.name;
+              stackTrace.message = error.message;
+              error.stack = stackTrace.stack;
+            }
+            throw error;
+          })
       }
 
-      route.push(name.replace(/[A-Z]/, w => `_${w.toLowerCase()}`)) // camelCase to snake_case - accessToken -> access_token
+      route.push(name.replace(/[A-Z]/g, w => `_${w.toLowerCase()}`)) // camelCase to snake_case - accessToken -> access_token
       return p(handler)
     },
     apply(_t, _, args) {

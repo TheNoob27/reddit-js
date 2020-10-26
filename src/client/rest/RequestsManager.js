@@ -2,6 +2,8 @@
 const createRoute = require("./APIRouter.js")
 const Constants = require("../../util/Constants")
 const fetch = require("node-fetch")
+const { APIError, Error } = require("../../errors/index.js")
+const HTTPError = require("../../errors/HTTPError.js")
 const requestToken = Symbol("requestToken") // im bad
 
 class RequestsManager {
@@ -31,18 +33,17 @@ class RequestsManager {
     const data = await this.api.accessToken.post({
       data: {
         username, password,
-        grant_type: "password"
+        grant_type: Constants.grantType
       },
       auth: requestToken
     })
-    console.log(data)
 
     const {
       access_token: accessToken,
       expires_in: expiresIn,
       token_type: tokenType
     } = data
-    if (accessToken == null || tokenType == null) throw data.error
+    // if (accessToken == null || tokenType == null) throw data.error
 
     this.token = `${tokenType} ${accessToken}`
     this.tokenExpireDate = expiresIn + Date.now() / 1000 // might shorten to be safe
@@ -63,15 +64,65 @@ class RequestsManager {
     if (!options.data || typeof options.data !== "object") options.data = {}
     options.data.api_type = "json"
     if (data.method === "GET") {
-      options.data.raw_json = 1
+      options.data.raw_json = 1 // make reddit return "hello >:)" instead of "hello &gt;:)"
       data.path += this._toQuery(options.data)
     }
-    else if (data.method === "POST") data.form = this._toQuery(options.data).slice(1)
+    else if (data.method === "POST") data.body = this._toQuery(options.data).slice(1)
     else data.body = JSON.stringify(options.data)
 
     console.log(this.apiURL + data.path, data)
     return fetch(this.apiURL + data.path, data)
-    .then(res => res.json())
+    .catch(e => {
+      throw new HTTPError({
+        name: e.constructor.name,
+        message: e.message,
+        code: e.status,
+        path: data.path,
+        method: data.method,
+      })
+    })
+    .then(async res => {
+      const parse = (r) =>
+        r.headers.get("content-type").startsWith("application/json")
+          ? r.json()
+          : r.text(); // maybe it should be buffer
+
+      if (res.ok) {
+        const d = await parse(res)
+        if (d && typeof d === "object" && d.error)
+          throw new APIError(new Error(d.error.toUpperCase()), data.path, data.method, res.status)
+        return d
+      }
+
+      // 4xx responses
+      if (res.status >= 400 && res.status < 500) {
+        await parse(res)
+          .then((d) => new APIError(d, data.path, data.method, res.status))
+          .catch(
+            (e) =>
+              new HTTPError({
+                name: e.constructor.name,
+                message: e.message,
+                code: e.status,
+                path: data.path,
+                method: data.method,
+              })
+          )
+          .then((error) => {
+            throw error;
+          });
+      }
+
+      // 5xx responses
+      if (res.status >= 500 && res.status < 600)
+        throw new HTTPError(
+          res.statusText,
+          res.constructor.name,
+          res.status,
+          data.method,
+          data.path
+        )
+    })
   }
   
   _toQuery(json) {
