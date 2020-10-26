@@ -31,9 +31,10 @@ class Client {
     this.rest = new RequestsManager(this)
   }
   
-  get api() {
-    return this.rest.api
-  }
+  // haha im lazy
+  get reddit() { return this.rest.api }   // reddit.com/
+  get api()    { return this.reddit.api } // reddit.com/api
+  get v1()     { return this.reddit.v1 }  // reddit.com/api/v1
 
   get authForToken() {
     if (typeof this.id !== "string" || typeof this.secret !== "string") throw new Error("INVALID_ID_SECRET")

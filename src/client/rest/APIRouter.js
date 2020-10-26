@@ -19,7 +19,8 @@ module.exports = function createRoute(manager) {
   const handler = {
     get(_, name) {
       if (other.includes(name)) return () => route.join("/")
-			
+      if (route.length === 1 && name === "v1") route.push("api")
+      
       if (methods.includes(name)) {
         // Preserve async stack
         let stackTrace = null;

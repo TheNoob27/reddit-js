@@ -16,7 +16,7 @@ class RequestsManager {
       configurable: false
     })
 
-    this.apiURL = Constants.API
+    this.redditURL = Constants.reddit
     this.tokenExpireDate = null
     this.requestTimeout = this.client.options.requestTimeout
   }
@@ -30,7 +30,7 @@ class RequestsManager {
     if (this.token) this.token = null
     
     const { username, password } = this.client
-    const data = await this.api.accessToken.post({
+    const data = await this.api.v1.accessToken.post({
       data: {
         username, password,
         grant_type: Constants.grantType
@@ -70,8 +70,9 @@ class RequestsManager {
     else if (data.method === "POST") data.body = this._toQuery(options.data).slice(1)
     else data.body = JSON.stringify(options.data)
 
-    console.log(this.apiURL + data.path, data)
-    return fetch(this.apiURL + data.path, data)
+    // temporary
+    if (options.log) console.log(this.redditURL + data.path, data)
+    return fetch(this.redditURL + data.path, data)
     .catch(e => {
       throw new HTTPError({
         name: e.constructor.name,

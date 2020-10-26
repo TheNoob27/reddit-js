@@ -7,5 +7,4 @@ const client = new Reddit.Client({
   password: "",
 });
 
-client.rest.getAuth().then(console.log, console.log)
-// .api.me.karma.get().then(console.log, console.log)
+client.v1.me.karma.get({ log: true }).then(console.log, console.log)
