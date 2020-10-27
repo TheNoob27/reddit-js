@@ -75,7 +75,7 @@ class RequestsManager {
     else if (options.form) data.body = this._toQuery(options.form).slice(1)
     else data.body = JSON.stringify(options.data)
 
-    return fetch(`${options.auth === requestToken || !options.auth ? Constants.reddit : this.apiURL}${data.path}`, data)
+    return fetch(`${options.auth === requestToken || options.auth === false ? Constants.reddit : this.apiURL}${data.path}`, data)
     .catch(e => {
       throw new HTTPError({
         name: e.constructor.name,
