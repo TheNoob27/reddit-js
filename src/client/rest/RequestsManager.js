@@ -68,6 +68,7 @@ class RequestsManager {
     if (!options.data || typeof options.data !== "object") options.data = {}
     options.data.api_type = "json"
     if (data.method === "GET") {
+      if (options.auth === false && !data.path.endsWith(".json")) options.path += ".json"
       options.data.raw_json = 1 // make reddit return "hello >:)" instead of "hello &gt;:)"
       data.path += this._toQuery(options.data)
     }

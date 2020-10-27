@@ -22,13 +22,6 @@ module.exports = function createRoute(manager) {
       if (route.length === 1 && name === "v1") route.push("api")
       
       if (methods.includes(name)) {
-        if ( // make getting comments easier - automatically add the .json
-          route.includes("comments")
-          && [2, 3].includes(route.indexOf("comments")) // "r/memes", "comments" or "r", "memes", "comments"
-          && !route.includes(".json")
-          && !route[route.length - 1].endsWith(".json")
-        ) route.push(".json")
-
         // Preserve async stack
         let stackTrace = null;
         if (Error.captureStackTrace) {
