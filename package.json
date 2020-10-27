@@ -1,6 +1,6 @@
 {
-  "name": "reddit.js",
-  "version": "0.0.0",
+  "name": "node-reddit-js",
+  "version": "0.0.1",
   "description": "A Node.js Reddit module that attempts to fully cover the Reddit API.",
   "main": "src/index.js",
   "scripts": {
@@ -8,23 +8,26 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/TheNoob27/reddit.js.git"
+    "url": "git+https://github.com/TheNoob27/reddit-js.git"
   },
   "keywords": [
     "reddit",
     "reddit.js",
     "reddit-js",
     "js-reddit",
-    "node-reddit"
+    "node-reddit",
+    "node-reddit-js",
+    "reddit-wrapper"
   ],
   "author": "TheNoob27",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/TheNoob27/reddit.js/issues"
+    "url": "https://github.com/TheNoob27/reddit-js/issues"
   },
-  "homepage": "https://github.com/TheNoob27/reddit.js#readme",
+  "homepage": "https://github.com/TheNoob27/reddit-js#readme",
   "dependencies": {
     "@discordjs/collection": "^0.1.6",
-    "node-fetch": "^2.6.1"
+    "node-fetch": "^2.6.1",
+    "reddit": "^1.2.0"
   }
 }

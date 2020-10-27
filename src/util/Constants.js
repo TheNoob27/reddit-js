@@ -6,7 +6,7 @@ module.exports = {
   grantType: "password",
 
   defaultOptions: {
-    // npm/reddit.js (https://www.github.com/TheNoob27/reddit.js, v0.0.1) Node.js/v12.18.2
+    // npm/node-reddit-js (https://www.github.com/TheNoob27/reddit-js, v0.0.1) Node.js/v12.18.2
     userAgent: `npm/${package.name} (${package.homepage.split("#")[0]}, v${package.version}) Node.js/${process.version}`,
     requestTimeout: 30000
   }
