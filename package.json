@@ -1,6 +1,6 @@
 {
   "name": "node-reddit-js",
-  "version": "0.0.1",
+  "version": "0.0.11",
   "description": "A Node.js Reddit module that attempts to fully cover the Reddit API.",
   "main": "src/index.js",
   "scripts": {
@@ -27,7 +27,6 @@
   "homepage": "https://github.com/TheNoob27/reddit-js#readme",
   "dependencies": {
     "@discordjs/collection": "^0.1.6",
-    "node-fetch": "^2.6.1",
-    "reddit": "^1.2.0"
+    "node-fetch": "^2.6.1"
   }
 }
